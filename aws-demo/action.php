@@ -17,8 +17,8 @@
 		
 		insertRecord($lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThurs, $isFriday);
 		
-		header("Location: index.php");
-		die();
+		//header("Location: index.php");
+		//die();
 	}
 	
 	function retrieveRecords(){
@@ -34,13 +34,18 @@
 	}
 	
 	function insertRecord($lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday){
-		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+		//mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+		mysqli_report(MYSQLI_REPORT_ALL);
 		$sql = "INSERT INTO Attendance(lname, fname, regisType, isMonday, isTuesday, isWednesday, isThursday, isFriday) VALUES(?,?,?,?,?,?,?,?)";
 		$con = mysqli_connect($GLOBALS['server'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database_name']);
 		if (!$con) {
 			die ("Connetion failed!");
 		}
 		$stmt = $con->prepare($sql);
+		if ($stmt == true){
+			echo $stmt->error;
+			echo "test error";
+		}
 		$stmt->bind_param("sssiiiii", $lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday);
 		$stmt->execute();
 		$stmt->close();
