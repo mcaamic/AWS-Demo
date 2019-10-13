@@ -1,8 +1,13 @@
 <?php
 	//Declare DB connection properties
-	$server = "localhost: 3306";
+	/*$server = "localhost: 3306";
 	$username = "root";
 	$password = "";
+	$database_name = "aws_attendance";
+	*/
+	$server = "phpmyadmin.cslpamwvqkbt.ap-southeast-2.rds.amazonaws.com: 3306";
+	$username = "phpmyadmin";
+	$password = "phpmyadmin";
 	$database_name = "aws_attendance";
 
 	if ($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -35,7 +40,7 @@
 	
 	function insertRecord($lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday){
 		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-		$sql = "INSERT INTO Attendance(lname, fname, regisType, isMonday, isTuesday, isWednesday, isThursday, isFriday) VALUES(?,?,?,?,?,?,?,?)";
+		$sql = "INSERT INTO attendance(lname, fname, regisType, isMonday, isTuesday, isWednesday, isThursday, isFriday) VALUES(?,?,?,?,?,?,?,?)";
 		$con = mysqli_connect($GLOBALS['server'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database_name']);
 		if (!$con) {
 			die ("Connetion failed!");
@@ -53,7 +58,7 @@
 	}
 	
 	function updateRecord($id, $lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday){
-		$sql = "UPDATE Attendance SET lname=?, fname=?, ";
+		$sql = "UPDATE attendance SET lname=?, fname=?, ";
 		$con = mysqli_connect($GLOBALS['server'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database_name']);
 		if (!$con) {
 			die ("Connetion failed!");
