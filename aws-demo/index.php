@@ -1,6 +1,19 @@
 <?php
 	session_start();
 	
+	if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+		$lname = isset($_POST['lastName'])?$_POST['lastName']:"";
+		$fname = isset($_POST['firstName'])?$_POST['firstName']:"";
+		$type = isset($_POST['attType'])?$_POST['attType']:"";
+		$isMonday = isset($_POST['isMonday'])?(bool)$_POST['isMonday']:false;
+		$isTuesday = isset($_POST['isTuesday'])?(bool)$_POST['isTuesday']:false;
+		$isWed = isset($_POST['isWednesday'])?(bool)$_POST['isWednesday']:false;
+		$isThurs = isset($_POST['isThursday'])?(bool)$_POST['isThursday']:false;
+		$isFriday = isset($_POST['isFriday'])?(bool)$_POST['isFriday']:false;
+		
+		insertRecord($lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThurs, $isFriday);
+	}
+	
 	function retrieveRecords(){
 		$sql = "SELECT * FROM attendance";
 		$con = mysqli_connect("localhost: 3306", "root", "", "aws_attendance");
@@ -13,8 +26,22 @@
 		return $result;
 	}
 	
-	function insertRecords($lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday){
-		$sql = "INSERT INTO Attendance VALUES(?,?,?,?,?,?,?,?,?)";
+	function insertRecord($lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday){
+		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+		$sql = "INSERT INTO Attendance(lname, fname, regisType, isMonday, isTuesday, isWednesday, isThursday, isFriday) VALUES(?,?,?,?,?,?,?,?)";
+		$con = mysqli_connect("localhost: 3306", "root", "", "aws_attendance");
+		if (!$con) {
+			die ("Connetion failed!");
+		}
+		$stmt = $con->prepare($sql);
+		$stmt->bind_param("sssiiiii", $lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday);
+		$stmt->execute();
+		$stmt->close();
+		$con->close();
+	}
+	
+	function updateRecord($id, $lname, $fname, $type, $isMonday, $isTuesday, $isWed, $isThursday, $isFriday){
+		$sql = "UPDATE Attendance SET lname=?, fname=?, ";
 		$con = mysqli_connect("localhost: 3306", "root", "", "aws_attendance");
 		if (!$con) {
 			die ("Connetion failed!");
@@ -35,6 +62,10 @@
 		}
 		return $checkHTML;
 	}
+	
+	function submit(){
+		echo "Test";
+	}
 ?>
 
 <html>
@@ -43,11 +74,19 @@
 			margin-right:auto;
 			margin-left:auto;
 			margin-bottom:20px;
+			margin-top:20px;
 			border: 0.5px solid gray;
 			border-radius: 10px;
 			width: 50%;
-			height: 380px;
 			padding: 20px;
+		}
+		
+		.center-contents{
+			text-align:center;
+		}
+		
+		body{
+			padding:30px;
 		}
 	</style>
 	<head>
@@ -59,7 +98,7 @@
 	<body>
 		<h1>This is a demo page hosted on <?php echo $_SERVER['REMOTE_ADDR'];  ?></h1>	
 		<div class="formDiv">
-			<form>
+			<form method="post" action="">
 				<div class="form-group">
 					<label for="firstName"> First Name </label>
 					<input type="text" id="firstName" name="firstName" class="form-control"/>
@@ -75,25 +114,30 @@
 				<div class="form-group">
 					<div><label> Weekly Attendance:</label></div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="isMonday" name="isMonday" value=""/>
+						<input class="form-check-input" type="checkbox" id="isMonday" name="isMonday" value="true"/>
 						<label class="form-check-label">Monday</label>
 					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="isTuesday" name="isTuesday" value=""/>
+						<input class="form-check-input" type="checkbox" id="isTuesday" name="isTuesday" value="true"/>
 						<label class="form-check-label">Tuesday</label>
 					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="isWednesday" name="isWednesday" value=""/>
+						<input class="form-check-input" type="checkbox" id="isWednesday" name="isWednesday" value="true"/>
 						<label class="form-check-label">Wednesday</label>
 					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="isThursday" name="isThursday" value=""/>
+						<input class="form-check-input" type="checkbox" id="isThursday" name="isThursday" value="true"/>
 						<label class="form-check-label">Thursday</label>
 					</div>
 					<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="isFriday" name="isFriday" value=""/>
+						<input class="form-check-input" type="checkbox" id="isFriday" name="isFriday" value="true"/>
 						<label class="form-check-label">Friday</label>
 					</div>
+				</div>
+				<div class="center-contents">
+					<input type="submit" value="Save" name="btnSave" class="btn btn-secondary"/>
+					<button class="btn btn-secondary"> Cancel </button>
+					<input type="hidden" name="isInsert" value="1"/>
 				</div>
 			</form>
 		</div>
