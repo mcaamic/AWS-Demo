@@ -1,0 +1,32 @@
+sudo su
+apt-get install apache2 -y
+apt-get install php7.0 -y
+apt-get install mysql-server
+apt-get update
+sudo apt-get install -y phpmyadmin
+
+nano /etc/apache2/sites-enabled/000-default.conf
+--ADD LINE-- 
+Include /etc/phpmyadmin/apache.conf
+
+service apache2 restart
+
+nano /etc/phpmyadmin/config.inc.php
+--ADD LINES BELOW THE PMA CONFIG AREA AND FILL IN DETAILS--
+$i++;
+$cfg['Servers'][$i]['host']          = 'phpmyadmin2.cslpamwvqkbt.ap-southeast-2.rds.amazonaws.com';
+$cfg['Servers'][$i]['port']          = '3306';
+$cfg['Servers'][$i]['socket']        = '';
+$cfg['Servers'][$i]['connect_type']  = 'tcp';
+$cfg['Servers'][$i]['extension']     = 'mysql';
+$cfg['Servers'][$i]['compress']      = FALSE;
+$cfg['Servers'][$i]['auth_type']     = 'config';
+$cfg['Servers'][$i]['user']          = 'phpmyadmin2';
+$cfg['Servers'][$i]['password']      = 'phpmyadmin2';
+
+git init
+git add .
+git commit -m "First Commit"
+git remote add origin https://github.com/mcaamic/AWS-Demo-EC2RDS.git
+git remote -v
+git push origin master -f
